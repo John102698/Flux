@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,10 +14,16 @@
    cfrm = frm; // loop the form 
    ccdoe = code_blank_id; // loop the code bank.
 }
+
  function savert() { // save code to code bank real time!
   var code = editor.getValue();
    document.getElementById(code_blank_id).value = code; // get editor value and send it to code bank. 
    var x = document.getElementById(indi).className = x.className.replace("fa fa-circle w3-right w3-text-blue add","fa fa-circle w3-right w3-text-green add");
+ }
+
+ function saveu() { // save on upload.
+  var code = editor.getValue();
+  document.getElementById(code_blank_id).value = code;
  }
 </script>
 
@@ -89,7 +96,7 @@ a:hover, a:active, a:focus {
  <div class="w3-bar" style="background-color:rgba(0, 7, 14, 0.84);">
   <a class="w3-bar-item w3-text-blue"><b class="character">&Phi;</b> <b class="w3-large w3-text-grey">flux</b></a>
   <a href="#" id="files" onclick="fopen()" class="w3-bar-item"><i class="fa fa-file"></i> Files</a>
-  <a onclick="loadFileAsText()" class="w3-bar-item"><i class="fa fa-upload"></i> Upload</a>
+  <a onclick="loadFileAsText(); saveu();" class="w3-bar-item"><i class="fa fa-upload"></i> Upload</a>
   <a onclick="saveTextAsFile()" class="w3-bar-item"><i class="fa fa-download"></i> Save</a>
   <a onclick="fengine()" class="w3-bar-item"><i class="fa fa-outdent w3-text-blue"></i> FluxEngine</a>
   <span class="w3-bar-item w3-text-blue" id="projb"></span>
@@ -102,6 +109,15 @@ a:hover, a:active, a:focus {
  <!--main editor-->
 <pre id="editor" onkeyup="savert()"></pre>
 
+
+<!--flux engine-->
+<textarea id="fe" style="display: none;">
+  @echo off
+  :A
+  echo %time%
+  goto A
+</textarea>
+
 <!--code banks and appending-->
 <div id="fcode"></div>
 
@@ -111,7 +127,7 @@ a:hover, a:active, a:focus {
    <a class="w3-bar-item"><i class="fa fa-reorder"></i> <i class="fa fa-code-fork"></i> <input class="folderinput w3-small" type="text" placeholder="Project Name:" id="proj"></a>
    <a class="w3-bar-item"><i onclick="add();" class="fa fa-plus-circle w3-text-blue add"></i> <i class="fa fa-file-code-o w3-text-amber"></i> <input id="fileval" type="text" placeholder="file name.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
       <a class="w3-bar-item"><i class="fa fa-code-fork"></i> <i class="fa fa-folder w3-text-amber"></i> <input id="floc" type="text" placeholder="File Location.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
-    <a class="w3-bar-item"><i onclick="loadFileAsText()" class="fa fa-upload w3-text-blue add"></i> <i class="fa fa-file-code-o w3-text-amber"></i> <input id="fileToLoad" type="file" placeholder="Upload File.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
+    <a class="w3-bar-item"><i onclick="loadFileAsText(); saveu();" class="fa fa-upload w3-text-blue add"></i> <i class="fa fa-file-code-o w3-text-amber"></i> <input id="fileToLoad" type="file" placeholder="Upload File.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
   <a id="master" class="w3-bar-item w3-button w3-text-white" onclick="Master();"><i class="fa fa-code-fork w3-text-green"></i> <i class="fa fa-folder w3-text-blue"></i> master</a> 
   <div id="fileaddr">
   </div>
@@ -132,8 +148,9 @@ a:hover, a:active, a:focus {
    var cfrm ="dtest"; // export current form to use. 
    var ccode; // current code bank, used to store code when switching tabs.
    var tab = 0; // switching between tools and file structure tabs
-   var indi;
-   
+   var fs; // flux snippet
+   var fsloc; // file location snippet
+
    
 
 </script>
@@ -244,15 +261,13 @@ function tclose() {
    document.getElementById("tools").onclick = function() { topen() } ;   
 }
 
-
-// file upload js
-function saveTextAsFile()
-{
-     var code = editor.getValue();
-    var textToSave = code;
+// fengine
+function fengine() {
+  var script = document.getElementById("fe").value;
+    var textToSave = script;
     var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
     var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    var fileNameToSaveAs = current_file;
+    var fileNameToSaveAs = "fengine.bat"
  
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
@@ -263,6 +278,27 @@ function saveTextAsFile()
     document.body.appendChild(downloadLink);
  
     downloadLink.click();
+  }
+
+// file upload js
+function saveTextAsFile()
+{
+     var code = editor.getValue();
+    var textToSave = code;
+    var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+    var fileNameToSaveAs = current_file + "."; // the file name as... work on this one!!
+ 
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    downloadLink.href = textToSaveAsURL;
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+ 
+    downloadLink.click();
+
 }
  
 function destroyClickedElement(event)
