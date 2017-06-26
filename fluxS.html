@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/javascript">
+  function switchmain() { // main editor function.
+    var code = editor.getValue();
+     document.getElementById(indi).style.display = "none";
+    editor.setValue(document.getElementById(code_blank_id).value); 
+   document.getElementById("title").innerHTML = "flux IDE : " + current_file; // set the title to the curent file being edited.
+   document.getElementById("fb").innerHTML = "<b class='w3-text-amber'><i class='fa fa-file-code-o'></i> Current File:</b>" + " " + current_file; // set the file banner to the current file being edited.
+   document.getElementById(cfrm).style.display = "none"; // set value of the current tab code. hide the form.
+   document.getElementById(frm).style.display = "block"; // display the current form being used/
+   cfrm = frm; // loop the form 
+   ccdoe = code_blank_id; // loop the code bank.
+}
+ function savert() { // save code to code bank real time!
+  var code = editor.getValue();
+   document.getElementById(code_blank_id).value = code; // get editor value and send it to code bank. 
+   var x = document.getElementById(indi).className = x.className.replace("fa fa-circle w3-right w3-text-blue add","fa fa-circle w3-right w3-text-green add");
+ }
+</script>
+
+  <meta charset="UTF-8">
+  <title id="title">flux IDE</title>
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+    
+    #editor { 
+        margin: 0;
+        position: absolute;
+        top: 39px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+        .character {
+font: 1.5em "Georgia", "Apple Symbols", serif;
+line-height: 1.1;
+}
+   .folderinput {
+         width:200px;
+        }
+
+ .add {-moz-transition: all 0.3s;-webkit-transition: all 0.3s;transition: all 0.3s;}.add:hover {-moz-transform: scale(1.1);-webkit-transform: scale(1.1);transform: scale(1.2);cursor:pointer;}
+
+    a {
+  color: #fff;
+  transition: 0.5s;
+   text-decoration: none;
+   cursor: pointer;
+}
+
+a:hover, a:active, a:focus {
+  color: #03c5ec;
+  outline: none;
+  text-decoration: none;
+}
+  .sendcode {
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(19, 80, 117, 0.78);
+  color: white;
+  cursor: pointer;
+  padding: 19px;
+  border-radius: 10px;
+}
+
+.sendcode:hover {
+  background-color: rgba(39, 192, 200, 0.83);
+  transition: 0.8s;
+  cursor: pointer;
+} 
+
+  </style>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+</head>
+<body>
+ <div class="w3-top">
+ <div class="w3-bar" style="background-color:rgba(0, 7, 14, 0.84);">
+  <a class="w3-bar-item w3-text-blue"><b class="character">&Phi;</b> <b class="w3-large w3-text-grey">flux</b></a>
+  <a href="#" id="files" onclick="fopen()" class="w3-bar-item"><i class="fa fa-file"></i> Files</a>
+  <a onclick="loadFileAsText()" class="w3-bar-item"><i class="fa fa-upload"></i> Upload</a>
+  <a onclick="saveTextAsFile()" class="w3-bar-item"><i class="fa fa-download"></i> Save</a>
+  <a onclick="fengine()" class="w3-bar-item"><i class="fa fa-outdent w3-text-blue"></i> FluxEngine</a>
+  <span class="w3-bar-item w3-text-blue" id="projb"></span>
+  <span class="w3-bar-item w3-text-blue" id="fb"></span>
+  <span class="w3-bar-tem" id="dtest"></span>
+  <span class="w3-bar-tem" id="dlatch"></span>
+ </div>
+ </div>
+
+ <!--main editor-->
+<pre id="editor" onkeyup="savert()"></pre>
+
+<!--code banks and appending-->
+<div id="fcode"></div>
+
+<div id="fs" style="display: none;">
+<div class="w3-sidebar w3-bar-block w3-animate-right" style="width:25%;right:0;background-color: rgba(0, 7, 14, 0.84);">
+  <h5 class="w3-bar-item w3-text-grey"><i class="fa fa-code-fork w3-text-amber"></i> File Structure</h5>
+   <a class="w3-bar-item"><i class="fa fa-reorder"></i> <i class="fa fa-code-fork"></i> <input class="folderinput w3-small" type="text" placeholder="Project Name:" id="proj"></a>
+   <a class="w3-bar-item"><i onclick="add();" class="fa fa-plus-circle w3-text-blue add"></i> <i class="fa fa-file-code-o w3-text-amber"></i> <input id="fileval" type="text" placeholder="file name.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
+      <a class="w3-bar-item"><i class="fa fa-code-fork"></i> <i class="fa fa-folder w3-text-amber"></i> <input id="floc" type="text" placeholder="File Location.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
+    <a class="w3-bar-item"><i onclick="loadFileAsText()" class="fa fa-upload w3-text-blue add"></i> <i class="fa fa-file-code-o w3-text-amber"></i> <input id="fileToLoad" type="file" placeholder="Upload File.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
+  <a id="master" class="w3-bar-item w3-button w3-text-white" onclick="Master();"><i class="fa fa-code-fork w3-text-green"></i> <i class="fa fa-folder w3-text-blue"></i> master</a> 
+  <div id="fileaddr">
+  </div>
+</div>
+</div>
+
+
+
+
+<script>
+// global vars
+// unique ID for a file!
+   var fuid = 0; // increment difference! for unique id.
+   var fcreated = ['2be88ca4242c76e8253ac62474851065032d6833'];  // check for recursive file names.
+   var current_file; // export current file name!
+   var code_blank_id; //export tetxarea id that holde the plain text code
+   var frm; // export the form id for appending data.
+   var cfrm ="dtest"; // export current form to use. 
+   var ccode; // current code bank, used to store code when switching tabs.
+   var tab = 0; // switching between tools and file structure tabs
+   var indi;
+   
+   
+
+</script>
+
+<!-- load ace -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.7/ace.js
+"></script>
+<!-- load ace language tools -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.7/ext-language_tools.js"></script>
+<script>
+    // trigger extension
+    ace.require("ace/ext/language_tools");
+    var editor = ace.edit("editor");
+    editor.session.setMode("ace/mode/html");
+    editor.setTheme("ace/theme/monokai");
+    // enable autocompletion and snippets
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+    });
+
+
+// get and create file entity!
+document.getElementById("text").onclick = function () {
+
+    var div = document.createElement('div');
+    div.innerHTML = "<p class='w3-text-white'>Hello It Works</p>";
+    document.body.appendChild(div);
+}
+ 
+//add a file!
+function add() {
+  var file = document.getElementById("fileaddr");
+  var filed = document.getElementById("fileval").value;
+  var fileloc = document.getElementById("floc").value;
+  var projval = document.getElementById("proj").value;
+  document.getElementById('projb').innerHTML = "<b class='w3-text-amber'><i class='fa fa-reorder'></i> Project:</b>" + " " + projval;
+  document.getElementById('fb').innerHTML = "<b class='w3-text-amber'><i class='fa fa-file-code-o'></i> Current File:</b>" + " " + filed;
+   // check for recursive file names!
+   if ( fcreated.indexOf( filed ) > -1 ) {
+    alert( filed + " " + "file Already Exist!");
+   }else{
+  // check if file input is empty
+   if ( filed == [ ] ) {
+   // do nothing.
+   }else {
+   file.innerHTML += "<a onclick='current_file = this.name; code_blank_id = &apos;cb" + fuid + "&apos;;"  + "frm = &apos;frm" + fuid + "&apos;;" + " indi =&apos;" + "ind" + fuid + "&apos;;" + "switchmain();' id=" + "nf" + fuid + " class='w3-bar-item w3-text-white w3-button' name='" + filed + "'><i class='fa fa-file-code-o w3-text-amber'></i> <i class='fa fa-close w3-right w3-text-red add' title='Remove this file.' onclick=" + "document.getElementById(&quot;" + "nf" + fuid + "&quot;).style.display='none';" + "></i>" + " "  + filed +" <i class='w3-text-grey'>" + fileloc + "<i id ='"+ "ind" + fuid  +"' class='fa fa-circle w3-right w3-text-blue add' style='display:none' title='Currenty editing..'></i><a/>";
+   fcreated.push(filed);
+   // create code bank. basically a textarea that stores the plain text code!
+   var code_bank = document.getElementById("fcode").innerHTML += "<textarea name='editor' id='" + "cb" + fuid + "' style='display:none;'></textarea><button onclick='saveTextAsFile()' class='sendcode'  title='Append Changes on, " + filed + "'><i class='fa fa-code-fork fa-2x w3-text-white'></button>";
+   fuid++
+}
+}
+}
+
+function Master() {
+  document.getElementById("submaster").style.display = "block";
+  document.getElementById("master").innerHTML = "<i class='fa fa-code-fork w3-text-green'></i> <i class='fa fa-folder-open w3-text-blue'></i> master"; 
+  alert(file_state);
+  }
+
+  var file_state = "null";
+// code! get Editor code value!
+ function getcode() {
+ var code = editor.getValue();
+}
+// open file tab
+function fopen() {
+   if ( tab == 2 ) {
+    tclose();
+    tab = 1;
+     var files = document.getElementById("fs");
+   files.style.display = "block";
+   document.getElementById("files").onclick = function() { fclose() } ;
+   }else{
+   var files = document.getElementById("fs");
+   files.style.display = "block";
+   document.getElementById("files").onclick = function() { fclose() } ;
+   tab = 1;
+ }
+}
+//close file tab
+function fclose() {
+   var files = document.getElementById("fs");
+   files.style.display = "none";
+   document.getElementById("files").onclick = function() { fopen() } ;   
+}
+// open tool tab
+function topen() {
+   if ( tab == 1 ) {
+    fclose();
+    tab = 2;
+     var files = document.getElementById("Tools");
+   files.style.display = "block";
+   document.getElementById("tools").onclick = function() { tclose() } ;
+   }else{
+   var files = document.getElementById("Tools");
+   files.style.display = "block";
+   document.getElementById("tools").onclick = function() { tclose() } ;
+   tab = 2; 
+ }
+}
+//close tool tab
+function tclose() {
+   var files = document.getElementById("Tools");
+   files.style.display = "none";
+   document.getElementById("tools").onclick = function() { topen() } ;   
+}
+
+
+// file upload js
+function saveTextAsFile()
+{
+     var code = editor.getValue();
+    var textToSave = code;
+    var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+    var fileNameToSaveAs = current_file;
+ 
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    downloadLink.href = textToSaveAsURL;
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+ 
+    downloadLink.click();
+}
+ 
+function destroyClickedElement(event)
+{
+    document.body.removeChild(event.target);
+}
+ 
+function loadFileAsText()
+{
+    var fileToLoad = document.getElementById("fileToLoad").files[0];
+ 
+    var fileReader = new FileReader();
+    fileReader.onload = function(fileLoadedEvent) 
+    {
+        var textFromFileLoaded = fileLoadedEvent.target.result;
+        editor.setValue(textFromFileLoaded);
+    };
+    fileReader.readAsText(fileToLoad, "UTF-8");
+}
+
+// fu.js done
+
+</script>
+</body>
+</html>
