@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,8 +169,9 @@ a:hover, a:active, a:focus {
    var ccode; // current code bank, used to store code when switching tabs.
    var tab = 0; // switching between tools and file structure tabs
    var fs; // flux snippet
-   var fsloc; // file location snippet
-  
+   var fsloc; // file location snippet file
+   var cfhash; // current file hash extension!
+   
 
    
 
@@ -204,12 +206,19 @@ document.getElementById("text").onclick = function () {
  
 //add a file!
 function add() {
+  var fhash = (+new Date).toString(36); // this is a random file hash generated.
   var file = document.getElementById("fileaddr");
   var filed = document.getElementById("fileval").value;
   var fileloc = document.getElementById("floc").value;
   var projval = document.getElementById("proj").value;
   document.getElementById('projb').innerHTML = "<b class='w3-text-amber'><i class='fa fa-reorder'></i> Project:</b>" + " " + projval;
   document.getElementById('fb').innerHTML = "<b class='w3-text-amber'><i class='fa fa-file-code-o'></i> Current File:</b>" + " " + filed;
+   // get file location snippet:
+   if ( fileloc == [ ] ) {
+     fsloc = "2be88ca4242c76e8253ac62474851065032d6833";
+   }else{
+     fsloc = fileloc;
+   }
    // check for recursive file names!
    if ( fcreated.indexOf( filed ) > -1 ) {
     alert( filed + " " + "file Already Exist!");
@@ -218,7 +227,7 @@ function add() {
    if ( filed == [ ] ) {
    // do nothing.
    }else {
-   file.innerHTML += "<a onclick='current_file = this.name; code_blank_id = &apos;cb" + fuid + "&apos;;"  + "frm = &apos;frm" + fuid + "&apos;;" + " indi =&apos;" + "ind" + fuid + "&apos;;" + "switchmain();' id=" + "nf" + fuid + " class='w3-bar-item w3-text-white w3-button' name='" + filed + "'><i class='fa fa-file-code-o w3-text-amber'></i> <i class='fa fa-close w3-right w3-text-red add' title='Remove this file.' onclick=" + "document.getElementById(&quot;" + "nf" + fuid + "&quot;).style.display='none';" + "></i>" + " "  + filed +" <i class='w3-text-grey'>" + fileloc + "<i id ='"+ "ind" + fuid  +"' class='fa fa-circle w3-right w3-text-blue add' style='display:none' title='Currenty editing..'></i><a/>";
+   file.innerHTML += "<a onclick='cfhash = &apos;" + fhash + "&apos;; current_file = this.name; code_blank_id = &apos;cb" + fuid + "&apos;;"  + "frm = &apos;frm" + fuid + "&apos;;" + " indi =&apos;" + "ind" + fuid + "&apos;;" + "switchmain();' id=" + "nf" + fuid + " class='w3-bar-item w3-text-white w3-button' name='" + filed + "'><i class='fa fa-file-code-o w3-text-amber'></i> <i class='fa fa-close w3-right w3-text-red add' title='Remove this file.' onclick=" + "document.getElementById(&quot;" + "nf" + fuid + "&quot;).style.display='none';" + "></i>" + " "  + filed +" <i class='w3-text-grey'>" + fileloc + "<i id ='"+ "ind" + fuid  +"' class='fa fa-circle w3-right w3-text-blue add' style='display:none' title='Currenty editing..'></i><a/>";
    fcreated.push(filed);
    // create code bank. basically a textarea that stores the plain text code!
    var code_bank = document.getElementById("fcode").innerHTML += "<textarea name='editor' id='" + "cb" + fuid + "' style='display:none;'></textarea><button onclick='saveTextAsFile()' class='sendcode'  title='Append Changes on, " + filed + "'><i class='fa fa-code-fork fa-2x w3-text-white'></button><button onclick='savert()' class='addcode'  title='Add Changes on, " + filed + "'><i class='fa fa-bolt fa-1x w3-text-white'></button>";
@@ -303,12 +312,45 @@ function fengine() {
 // file upload js
 function saveTextAsFile()
 {
-      var fhash = (+new Date).toString(36); // this is a random file hash generated.
+      // hash extented file
      var code = editor.getValue();
     var textToSave = code;
     var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
     var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    var fileNameToSaveAs = current_file + "." + fhash;
+    var fileNameToSaveAs = current_file + "." + cfhash;
+ 
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    downloadLink.href = textToSaveAsURL;
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+ 
+    downloadLink.click();
+
+
+      // flux new file snippet
+    var textToSave = current_file;
+    var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+    var fileNameToSaveAs = cfhash + ".ion";
+ 
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    downloadLink.href = textToSaveAsURL;
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+ 
+    downloadLink.click();
+
+     // flux new file snippet location snippet.
+    var textToSave = fsloc;
+    var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+    var fileNameToSaveAs = cfhash + ".ionloc";
  
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
@@ -342,6 +384,14 @@ function loadFileAsText()
 
 // fu.js done
 
+</script>
+
+<script language="JavaScript">
+// prevent close tab!
+    window.onbeforeunload = confirmExit;
+    function confirmExit() {
+        return "Closing Flux IDE... Are you sure?";
+    }
 </script>
 </body>
 </html>
