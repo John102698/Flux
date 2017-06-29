@@ -220,7 +220,7 @@ function add() {
    file.innerHTML += "<a onclick='current_file = this.name; code_blank_id = &apos;cb" + fuid + "&apos;;"  + "frm = &apos;frm" + fuid + "&apos;;" + " indi =&apos;" + "ind" + fuid + "&apos;;" + "switchmain();' id=" + "nf" + fuid + " class='w3-bar-item w3-text-white w3-button' name='" + filed + "'><i class='fa fa-file-code-o w3-text-amber'></i> <i class='fa fa-close w3-right w3-text-red add' title='Remove this file.' onclick=" + "document.getElementById(&quot;" + "nf" + fuid + "&quot;).style.display='none';" + "></i>" + " "  + filed +" <i class='w3-text-grey'>" + fileloc + "<i id ='"+ "ind" + fuid  +"' class='fa fa-circle w3-right w3-text-blue add' style='display:none' title='Currenty editing..'></i><a/>";
    fcreated.push(filed);
    // create code bank. basically a textarea that stores the plain text code!
-   var code_bank = document.getElementById("fcode").innerHTML += "<textarea name='editor' id='" + "cb" + fuid + "' style='display:none;'></textarea><button onclick='saveTextAsFile()' class='sendcode'  title='Append Changes on, " + filed + "'><i class='fa fa-code-fork fa-2x w3-text-white'></button><button onclick='savert()' class='addcode'  title='Add Changes on, " + filed + "'><i class='fa fa-bolt fa-2x w3-text-white'></button>";
+   var code_bank = document.getElementById("fcode").innerHTML += "<textarea name='editor' id='" + "cb" + fuid + "' style='display:none;'></textarea><button onclick='saveTextAsFile()' class='sendcode'  title='Append Changes on, " + filed + "'><i class='fa fa-code-fork fa-2x w3-text-white'></button><button onclick='savert()' class='addcode'  title='Add Changes on, " + filed + "'><i class='fa fa-bolt fa-1x w3-text-white'></button>";
    fuid++
 }
 }
