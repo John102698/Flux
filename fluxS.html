@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,18 +8,18 @@
   function switchmain() { // main editor function.
     var code = editor.getValue();
      document.getElementById(indi).style.display = "none";
-    editor.setValue(document.getElementById(code_blank_id).value); 
+    editor.setValue(document.getElementById(code_blank_id).value);
    document.getElementById("title").innerHTML = "flux IDE : " + current_file; // set the title to the curent file being edited.
    document.getElementById("fb").innerHTML = "<b class='w3-text-amber'><i class='fa fa-file-code-o'></i> Current File:</b>" + " " + current_file; // set the file banner to the current file being edited.
    document.getElementById(cfrm).style.display = "none"; // set value of the current tab code. hide the form.
    document.getElementById(frm).style.display = "block"; // display the current form being used/
-   cfrm = frm; // loop the form 
+   cfrm = frm; // loop the form
    ccdoe = code_blank_id; // loop the code bank.
 }
 
  function savert() { // save code to code bank real time!
   var code = editor.getValue();
-   document.getElementById(code_blank_id).value = code; // get editor value and send it to code bank. 
+   document.getElementById(code_blank_id).value = code; // get editor value and send it to code bank.
    var x = document.getElementById(indi).className = x.className.replace("fa fa-circle w3-right w3-text-blue add","fa fa-circle w3-right w3-text-green add");
  }
 
@@ -34,8 +35,8 @@
     body {
         overflow: hidden;
     }
-    
-    #editor { 
+
+    #editor {
         margin: 0;
         position: absolute;
         top: 39px;
@@ -84,7 +85,7 @@ a:hover, a:active, a:focus {
   background-color: rgba(39, 192, 200, 0.83);
   transition: 0.8s;
   cursor: pointer;
-} 
+}
 
   .addcode {
   position: fixed;
@@ -104,7 +105,7 @@ a:hover, a:active, a:focus {
   background-color: rgba(39, 192, 200, 0.83);
   transition: 0.8s;
   cursor: pointer;
-} 
+}
   </style>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -119,11 +120,12 @@ a:hover, a:active, a:focus {
   <a onclick="loadFileAsText(); saveu();" class="w3-bar-item"><i class="fa fa-upload"></i> Upload</a>
   <a onclick="saveTextAsFile()" class="w3-bar-item"><i class="fa fa-download"></i> Save</a>
   <a onclick="fengine()" class="w3-bar-item"><i class="fa fa-outdent w3-text-blue"></i> FluxEngine</a>
+  <a onclick="fpack()" class="w3-bar-item"><i class="fa fa-file-zip-o w3-text-blue"></i> Create Package</a>
   <span class="w3-bar-item w3-text-blue" id="projb"></span>
   <span class="w3-bar-item w3-text-blue" id="fb"></span>
   <span class="w3-bar-tem" id="dtest"></span>
   <span class="w3-bar-tem" id="dlatch"></span>
- </div>
+</div>
  </div>
 
  <!--main editor-->
@@ -132,10 +134,65 @@ a:hover, a:active, a:focus {
 
 <!--flux engine-->
 <textarea id="fe" style="display: none;">
+  :: FLUX EDITOR batch engine v0.1
+  :: Bryce Mercines  2017,
+
+:: main()
   @echo off
-  :A
-  echo %time%
-  goto A
+   :main
+     :: engine init message.
+     ::scan for snippets.
+     if exist *.ion goto newfile
+     if exist *.iop goto npackage
+     if exist *.iof goto nfolder
+     if exist *.iod goto remf
+     goto main :: loop thtrough scanning..
+
+      :: create new file when snippet is found.
+     :newfile
+        for /R  %%f in (*.ion) do (
+         echo Found: file snippet==^> Decoding snippet %%~nf.ion
+         del "%%~nf"
+         ren "%%~nf.ion" "%%~nf"
+         echo created file = %%~nf at %time% - %date%
+         echo %%~nf >> flux.dll
+         echo commit id = %random%.%random%.%random%
+         goto main
+        )
+       :: create new package when snippet is found.
+     :npackage
+        for /R  %%f in (*.iop) do (
+        echo Reading Layout Index...
+        echo Copying Entities...
+        creating Directory Package....
+        md fluxpack
+        for /f "delims=" %%i in (flux.dll) do copy "%%i" "./fluxpack"
+        for /f "delims=" %%i in (flux.dll) do del "%%i"
+        echo  Creating package......
+        del *.iop
+        del flux.dll
+        echo Package Created! Package name: fluxpack
+        echo created on %date% -- %time%
+        echo commit id - %random%.%random%.%random%
+        goto main
+        )
+     :: create new folder when snippet is found..
+     :nfolder
+       for /R  %f in (*.iof) do (
+        echo Found new folder snippet: Decoding request....
+         del *.iof
+        goto main
+       )
+      :: delete specific file when snippet is found..
+       :remf
+         for /R  %f in (*.iod) do (
+          echo found request to remove file!...
+          echo file/folder name: %%~nf
+          del *.iod
+          goto main
+         )
+
+      :: end of code.
 </textarea>
 
 <!--code banks and appending-->
@@ -148,11 +205,14 @@ a:hover, a:active, a:focus {
    <a class="w3-bar-item"><i onclick="add();" class="fa fa-plus-circle w3-text-blue add"></i> <i class="fa fa-file-code-o w3-text-amber"></i> <input id="fileval" type="text" placeholder="file name.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
       <a class="w3-bar-item"><i class="fa fa-code-fork"></i> <i class="fa fa-folder w3-text-amber"></i> <input id="floc" type="text" placeholder="File Location.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
     <a class="w3-bar-item"><i onclick="loadFileAsText(); saveu();" class="fa fa-upload w3-text-blue add"></i> <i class="fa fa-file-code-o w3-text-amber"></i> <input id="fileToLoad" type="file" placeholder="Upload File.." class="w3-small w3-round w3-hover-pale-green w3-grey folderinput"></a>
-  <a id="master" class="w3-bar-item w3-button w3-text-white" onclick="Master();"><i class="fa fa-code-fork w3-text-green"></i> <i class="fa fa-folder w3-text-blue"></i> master</a> 
+  <a id="master" class="w3-bar-item w3-button w3-text-white" onclick="Master();"><i class="fa fa-code-fork w3-text-green"></i> <i class="fa fa-folder w3-text-blue"></i> master</a>
   <div id="fileaddr">
   </div>
 </div>
 </div>
+
+
+
 
 
 
@@ -165,15 +225,15 @@ a:hover, a:active, a:focus {
    var current_file; // export current file name!
    var code_blank_id; //export tetxarea id that holde the plain text code
    var frm; // export the form id for appending data.
-   var cfrm ="dtest"; // export current form to use. 
+   var cfrm ="dtest"; // export current form to use.
    var ccode; // current code bank, used to store code when switching tabs.
    var tab = 0; // switching between tools and file structure tabs
    var fs; // flux snippet
    var fsloc; // file location snippet file
    var cfhash; // current file hash extension!
-   
 
-   
+
+
 
 </script>
 
@@ -203,7 +263,7 @@ document.getElementById("text").onclick = function () {
     div.innerHTML = "<p class='w3-text-white'>Hello It Works</p>";
     document.body.appendChild(div);
 }
- 
+
 //add a file!
 function add() {
   var fhash = (+new Date).toString(36); // this is a random file hash generated.
@@ -238,7 +298,7 @@ function add() {
 
 function Master() {
   document.getElementById("submaster").style.display = "block";
-  document.getElementById("master").innerHTML = "<i class='fa fa-code-fork w3-text-green'></i> <i class='fa fa-folder-open w3-text-blue'></i> master"; 
+  document.getElementById("master").innerHTML = "<i class='fa fa-code-fork w3-text-green'></i> <i class='fa fa-folder-open w3-text-blue'></i> master";
   alert(file_state);
   }
 
@@ -266,7 +326,7 @@ function fopen() {
 function fclose() {
    var files = document.getElementById("fs");
    files.style.display = "none";
-   document.getElementById("files").onclick = function() { fopen() } ;   
+   document.getElementById("files").onclick = function() { fopen() } ;
 }
 // open tool tab
 function topen() {
@@ -280,14 +340,15 @@ function topen() {
    var files = document.getElementById("Tools");
    files.style.display = "block";
    document.getElementById("tools").onclick = function() { tclose() } ;
-   tab = 2; 
+   tab = 2;
  }
 }
 //close tool tab
+
 function tclose() {
    var files = document.getElementById("Tools");
    files.style.display = "none";
-   document.getElementById("tools").onclick = function() { topen() } ;   
+   document.getElementById("tools").onclick = function() { topen() } ;
 }
 
 // fengine
@@ -297,7 +358,7 @@ function fengine() {
     var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
     var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
     var fileNameToSaveAs = "fengine.bat"
- 
+
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
     downloadLink.innerHTML = "Download File";
@@ -305,20 +366,37 @@ function fengine() {
     downloadLink.onclick = destroyClickedElement;
     downloadLink.style.display = "none";
     document.body.appendChild(downloadLink);
- 
+
     downloadLink.click();
   }
+ // crerate package....
+  function fpack() {
+    var script = document.getElementById("fe").value;
+      var textToSave = script;
+      var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+      var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+      var fileNameToSaveAs = "fengine.iop";
 
+      var downloadLink = document.createElement("a");
+      downloadLink.download = fileNameToSaveAs;
+      downloadLink.innerHTML = "Download File";
+      downloadLink.href = textToSaveAsURL;
+      downloadLink.onclick = destroyClickedElement;
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+
+      downloadLink.click();
+  }
 // file upload js
 function saveTextAsFile()
 {
-      // hash extented file
+      // hash file extension disabled,,
      var code = editor.getValue();
     var textToSave = code;
     var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
     var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    var fileNameToSaveAs = current_file + "." + cfhash;
- 
+    var fileNameToSaveAs = current_file + "." + "ion";
+        // file snippet is equal to actual file name!!!!1
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
     downloadLink.innerHTML = "Download File";
@@ -326,55 +404,22 @@ function saveTextAsFile()
     downloadLink.onclick = destroyClickedElement;
     downloadLink.style.display = "none";
     document.body.appendChild(downloadLink);
- 
+
     downloadLink.click();
-
-
-      // flux new file snippet
-    var textToSave = current_file;
-    var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
-    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    var fileNameToSaveAs = cfhash + ".ion";
- 
-    var downloadLink = document.createElement("a");
-    downloadLink.download = fileNameToSaveAs;
-    downloadLink.innerHTML = "Download File";
-    downloadLink.href = textToSaveAsURL;
-    downloadLink.onclick = destroyClickedElement;
-    downloadLink.style.display = "none";
-    document.body.appendChild(downloadLink);
- 
-    downloadLink.click();
-
-     // flux new file snippet location snippet.
-    var textToSave = fsloc;
-    var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
-    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    var fileNameToSaveAs = cfhash + ".ionloc";
- 
-    var downloadLink = document.createElement("a");
-    downloadLink.download = fileNameToSaveAs;
-    downloadLink.innerHTML = "Download File";
-    downloadLink.href = textToSaveAsURL;
-    downloadLink.onclick = destroyClickedElement;
-    downloadLink.style.display = "none";
-    document.body.appendChild(downloadLink);
- 
-    downloadLink.click();
-
+ // end of append file....
 }
- 
+
 function destroyClickedElement(event)
 {
     document.body.removeChild(event.target);
 }
- 
+
 function loadFileAsText()
 {
     var fileToLoad = document.getElementById("fileToLoad").files[0];
- 
+
     var fileReader = new FileReader();
-    fileReader.onload = function(fileLoadedEvent) 
+    fileReader.onload = function(fileLoadedEvent)
     {
         var textFromFileLoaded = fileLoadedEvent.target.result;
         editor.setValue(textFromFileLoaded);
